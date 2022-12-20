@@ -46,7 +46,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Jerozeek](https://github.com/MusahMusah)
+- [Jerozeek](https://github.com/Jerozeek)
 - [All Contributors](../../contributors)
 
 ## License
