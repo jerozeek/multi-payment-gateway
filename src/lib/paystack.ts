@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, {AxiosInstance, AxiosResponse} from 'axios';
 
 export type IResolveAccount = {
     account_number: string;
@@ -241,8 +241,10 @@ export type IBank = {
 
 export class PayStack {
 
+    public axiosInstance:AxiosInstance;
+
     constructor(private authorization: string) {
-        axios.create({
+        this.axiosInstance = axios.create({
             baseURL: 'https://api.paystack.co',
             headers:{
                 'Authorization': `Bearer ${this.authorization}`,
@@ -253,32 +255,32 @@ export class PayStack {
     }
 
     public async createRecipient(data:ICreateRecipient):Promise<IResolvedRecipient> {
-        const res = <AxiosResponse> await axios.post('/transferrecipient', JSON.stringify(data));
+        const res = <AxiosResponse> await this.axiosInstance.post('/transferrecipient', JSON.stringify(data));
         return res.data;
     };
 
     public async resolveAccount(data:IResolveAccount):Promise<IResolveAccountResponse> {
-        const res = <AxiosResponse> await axios.get(`/bank/resolve?account_number=${data.account_number}&bank_code=${data.bank_code}`);
+        const res = <AxiosResponse> await this.axiosInstance.get(`/bank/resolve?account_number=${data.account_number}&bank_code=${data.bank_code}`);
         return res.data;
     };
 
     public async verifyTransaction(reference: string): Promise<ITransactionsVerification> {
-        const res = <AxiosResponse> await axios.get(`/transaction/verify/${encodeURIComponent(reference)}`);
+        const res = <AxiosResponse> await this.axiosInstance.get(`/transaction/verify/${encodeURIComponent(reference)}`);
         return res.data;
     }
 
     public async getBanks():Promise<IBankListing> {
-        const res = <AxiosResponse> await axios.get(`/bank`);
+        const res = <AxiosResponse> await this.axiosInstance.get(`/bank`);
         return res.data
     }
 
-    public static async initiateTransfer(payload: ISingleTransfer | IBulkTransfer ):Promise<TransferResponse> {
-        const res = <AxiosResponse> await axios.post('/transfer', JSON.stringify(payload));
+    public async initiateTransfer(payload: ISingleTransfer | IBulkTransfer ):Promise<TransferResponse> {
+        const res = <AxiosResponse> await this.axiosInstance.post('/transfer', JSON.stringify(payload));
         return res.data;
     }
 
     public async chargeAuthorization(payload: IRecurrentPayload):Promise<ITransactionsVerification> {
-        const res = <AxiosResponse> await axios.post('/transaction/charge_authorization', JSON.stringify(payload));
+        const res = <AxiosResponse> await this.axiosInstance.post('/transaction/charge_authorization', JSON.stringify(payload));
         return res.data;
     }
 }
